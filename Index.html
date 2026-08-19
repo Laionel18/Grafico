@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Costos de Producción</title>
+    <!-- CSS de Bootstrap para un diseño moderno -->
+    <link href="https://cdn.jsdelivr.net/css-select/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Librería Chart.js para el gráfico interactivo -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px 0;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: none;
+        }
+        .highlight-card {
+            border-left: 5px solid;
+        }
+        .card-fijos { border-color: #dc3545; }
+        .card-optimo { border-color: #198754; }
+        .card-funcion { border-color: #0d6efd; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold text-primary">Análisis Financiero: Costos de Producción</h1>
+        <p class="lead text-muted">Optimización matemática basada en la función cuadrática $C(x) = x^2 - 10x + 40$</p>
+    </div>
+
+    <!-- Tarjetas con Resumen Ejecutivo -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 highlight-card card-fijos bg-white">
+                <h6 class="text-danger fw-bold">COSTOS FIJOS (x = 0)</h6>
+                <h3 class="fw-bold">$40,000 USD</h3>
+                <small class="text-muted">Gasto base sin producción (40 mil USD)</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 highlight-card card-optimo bg-white">
+                <h6 class="text-success fw-bold">PRODUCCIÓN ÓPTIMA (Vértice)</h6>
+                <h3 class="fw-bold">500 Unidades</h3>
+                <small class="text-muted">Equivale a x = 5 (en cientos de unidades)</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 highlight-card card-funcion bg-white">
+                <h6 class="text-primary fw-bold">COSTO MÍNIMO POSIBLE</h6>
+                <h3 class="fw-bold">$15,000 USD</h3>
+                <small class="text-muted">Costo logrado en el punto óptimo (15 mil USD)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Interactivo -->
+    <div class="card p-4 bg-white mb-4">
+        <h5 class="fw-bold mb-3 text-secondary">Curva Parabólica de Costos</h5>
+        <div style="position: relative; height: 60vh;">
+            <canvas id="costosChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Generar datos para la curva de C(x) = x^2 - 10x + 40
+    const xValues = [];
+    const yValues = [];
+
+    for (let x = 0; x <= 10; x += 0.5) {
+        xValues.push(x);
+        yValues.push(Math.pow(x, 2) - 10 * x + 40);
+    }
+
+    const ctx = document.getElementById('costosChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xValues,
+            datasets: [
+                {
+                    label: 'Función C(x) en miles de USD',
+                    data: yValues,
+                    borderColor: '#0d6efd',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Costos Fijos (0, $40k)',
+                    data: [{x: 0, y: 40}],
+                    backgroundColor: '#dc3545',
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    type: 'scatter'
+                },
+                {
+                    label: 'Punto Óptimo (500 unid, $15k)',
+                    data: [{x: 5, y: 15}],
+                    backgroundColor: '#198754',
+                    pointRadius: 10,
+                    pointHoverRadius: 12,
+                    type: 'scatter'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let xVal = context.raw.x !== undefined ? context.raw.x : context.label;
+                            let yVal = context.raw.y !== undefined ? context.raw.y : context.raw;
+                            return ` x = ${xVal} (${xVal * 100} unidades) -> Costo: $${yVal}k USD ($${yVal * 1000})`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Unidades Producidas (en cientos)',
+                        font: { size: 14, weight: 'bold' }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Costo Total (en miles de USD)',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 45
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
